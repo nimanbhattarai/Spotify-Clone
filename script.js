@@ -15,55 +15,53 @@ function convertSecondsToMinutesSeconds(seconds) {
 }
 
 async function getSongs(folder) {
-    currFolder = folder
-    let a = await fetch(`/${folder}/`)
+    currFolder = folder;
+    let a = await fetch(`./${folder}/`); // Use relative path
     let response = await a.text();
-    //console.log(response)
-
-    let div = document.createElement("div")
+    
+    let div = document.createElement("div");
     div.innerHTML = response;
-    let as = div.getElementsByTagName("a")
+    let as = div.getElementsByTagName("a");
 
-    songs = []
+    songs = [];
 
     for (let index = 0; index < as.length; index++) {
         const element = as[index];
 
         if (element.href.endsWith(".mp3")) {
-            songs.push(element.href.split(`/${folder}/`)[1])//spliting the song name after the songs(word) 
+            const songName = element.href.split(`/${folder}/`)[1]; // Extract the song name
+            songs.push(songName); // Push the song name into the array
+            console.log(`Found song: ${songName}`); // Log the song name
         }
-
     }
 
-    //show all the songs in the playlist
-    let songUL = document.querySelector(".songList").getElementsByTagName("ul")[0]
-    songUL.innerHTML = ""
+    // Show all the songs in the playlist
+    let songUL = document.querySelector(".songList").getElementsByTagName("ul")[0];
+    songUL.innerHTML = "";
     for (const song of songs) {
-        songUL.innerHTML = songUL.innerHTML + `<li> 
-             
-             <img class="invert" src="img/music.svg " alt="">
-                         <div class="info">
-                             <div>${song.replaceAll("%20", " ").replaceAll("%26", " ")}</div>
-                         </div>
-                         <div class="playnow">
-                             Play Now
-                             <img class="invert" src="img/playnow.svg" alt="">
- 
-                         </div>
-                     </li>`;
+        songUL.innerHTML += `<li> 
+            <img class="invert" src="img/music.svg" alt="">
+            <div class="info">
+                <div>${song.replaceAll("%20", " ").replaceAll("%26", " ")}</div>
+            </div>
+            <div class="playnow">
+                Play Now
+                <img class="invert" src="img/playnow.svg" alt="">
+            </div>
+        </li>`;
     }
 
-    //Attach and event listener to each song
+    // Attach an event listener to each song
     Array.from(document.querySelector(".songList").getElementsByTagName("li")).forEach(e => {
         e.addEventListener("click", element => {
-            console.log(e.querySelector(".info").firstElementChild.innerHTML)
-            playMusic(e.querySelector(".info").firstElementChild.innerHTML.trim())
-        })
-    })
+            console.log(e.querySelector(".info").firstElementChild.innerHTML);
+            playMusic(e.querySelector(".info").firstElementChild.innerHTML.trim());
+        });
+    });
 
     return songs;
-
 }
+
 const playMusic = (track, pause = false) => {
     currentSong.src = `/${currFolder}/` + track
     if (!pause) {
@@ -76,7 +74,7 @@ const playMusic = (track, pause = false) => {
 
 async function displayAlbums() {
     console.log("displaying albums");
-    let a = await fetch('/songs/'); // Adjust this if necessary
+    let a = await fetch('./songs/'); // Use relative path
     let response = await a.text();
     let div = document.createElement("div");
     div.innerHTML = response;
@@ -88,7 +86,7 @@ async function displayAlbums() {
         const e = array[index]; 
         if (e.href.includes("/songs") && !e.href.includes(".htaccess")) {
             let folder = e.href.split("/").pop(); // Get the last segment of the URL
-            let infoUrl = `${window.location.origin}/songs/${folder}/info.json`; // Use window.location.origin
+            let infoUrl = `./songs/${folder}/info.json`; // Use relative path
             
             console.log(`Fetching: ${infoUrl}`); // Log the URL being fetched
             
@@ -107,7 +105,7 @@ async function displayAlbums() {
                             <path d="M5 20V4L19 12L5 20Z" stroke="#141B34" fill="#000" stroke-width="1.5" stroke-linejoin="round" />
                         </svg>
                     </div>
-                    <img src="/songs/${folder}/card.jpeg" alt="">
+                    <img src="./songs/${folder}/card.jpeg" alt="">
                     <h2>${responseData.title}</h2>
                     <p>${responseData.description}</p>
                 </div>`;
