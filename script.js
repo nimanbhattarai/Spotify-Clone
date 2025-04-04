@@ -76,7 +76,7 @@ const playMusic = (track, pause = false) => {
 
 async function displayAlbums() {
     console.log("displaying albums");
-    let a = await fetch('/songs/'); // Fetch the directory listing
+    let a = await fetch('/songs/'); // Adjust this if necessary
     let response = await a.text();
     let div = document.createElement("div");
     div.innerHTML = response;
@@ -87,12 +87,11 @@ async function displayAlbums() {
     for (let index = 0; index < array.length; index++) {
         const e = array[index]; 
         if (e.href.includes("/songs") && !e.href.includes(".htaccess")) {
-            // Extract the folder name correctly
             let folder = e.href.split("/").pop(); // Get the last segment of the URL
-            console.log(`Fetching: /songs/${folder}/info.json`); // Log the URL being fetched
+            let infoUrl = `${window.location.origin}/songs/${folder}/info.json`; // Use window.location.origin
             
-            // Construct the correct URL for the info.json file
-            let infoUrl = `/songs/${folder}/info.json`;
+            console.log(`Fetching: ${infoUrl}`); // Log the URL being fetched
+            
             let infoResponse = await fetch(infoUrl);
             
             if (!infoResponse.ok) {
